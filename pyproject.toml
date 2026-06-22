@@ -1,0 +1,14 @@
+[tool.pytest.ini_options]
+
+addopts = "--headed  --alluredir allure-results"
+#generate_report_on_test = true
+
+#addopts = "--headed --tracing retain-on-failure -n 3"
+#--html=report.html --self-contained-html
+
+#from shell debug mode
+#$env:PWDEBUG=1
+#pytest -s -k test_name
+
+#tracing
+#playwright show-trace trace.zip
