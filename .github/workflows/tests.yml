@@ -62,8 +62,8 @@ jobs:
 #          fi
 #        continue-on-error: true
 #
-      - name: Generate Allure report
-        run: allure generate allure-results -o allure-report --clean
+#      - name: Generate Allure report
+#        run: allure generate allure-results -o allure-report --clean
 
       - name: Run Allure Action
         uses: allure-framework/allure-action@v0
