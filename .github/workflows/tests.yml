@@ -48,32 +48,24 @@ jobs:
         run: pytest -m api
         continue-on-error: true
 
-#      - name: Checkout gh-pages for history
-#        uses: actions/checkout@v5
-#        continue-on-error: true
-#        with:
-#          ref: gh-pages
-#          path: gh-pages
-#
-#      - name: Restore Allure history
-#        run: |
-#          if [ -d gh-pages/history ]; then
-#            cp -r gh-pages/history allure-results/history
-#          fi
-#        continue-on-error: true
-#
-#      - name: Generate Allure report
-#        run: allure generate allure-results -o allure-report --clean
-
-      - name: Run Allure Action
-        uses: allure-framework/allure-action@v0
+# Get previous report history
+      - name: Get Allure history
+        uses: actions/checkout@v5
+        continue-on-error: true
         with:
-          report-directory: "./allure-report"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          ref: gh-pages
+          path: gh-pages
+
+      # Generate report
+      - name: Generate Allure Report
+        uses: allure-framework/allure-action@v1
+        with:
+          allure_results: allure-results
+          allure_history: allure-history
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-report
+          publish_dir: allure-history
