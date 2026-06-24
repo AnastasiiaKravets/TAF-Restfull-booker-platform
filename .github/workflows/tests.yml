@@ -41,8 +41,17 @@ jobs:
 #      - name: Install Playwright browsers
 #        run: playwright install --with-deps chromium
 
+      - name: Cache Allure CLI
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm-global
+          key: allure-cli-${{ runner.os }}
+
       - name: Install Allure 3
-        run: npm install -g allure
+        run: |
+          npm config set prefix ~/.npm-global
+          npm install -g allure
+          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
 
       - name: Run API gate
         run: pytest -m api
@@ -54,6 +63,8 @@ jobs:
         with:
           ref: gh-pages
           path: gh-pages
+          sparse-checkout: history.jsonl
+          sparse-checkout-cone-mode: false
 
       - name: Restore history file
         run: |
@@ -64,7 +75,7 @@ jobs:
         continue-on-error: true
 
       - name: Generate Allure Report
-        run: allure generate allure-results --output allure-report
+        run: allure generate allure-results --output allure-report --clean
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
@@ -72,3 +83,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-report
+          force_orphan: true
