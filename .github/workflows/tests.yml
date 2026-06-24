@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -41,31 +41,34 @@ jobs:
 #      - name: Install Playwright browsers
 #        run: playwright install --with-deps chromium
 
-#      - name: Install Allure 3 CLI
-#        run: npm install -g @allurereport/cli
+      - name: Install Allure 3 CLI
+        run: npm install -g @allurereport/cli
 
       - name: Run API gate
         run: pytest -m api
         continue-on-error: true
 
-# Get previous report history
       - name: Get Allure history
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages
 
-      # Generate report
+      - name: Restore history file
+        run: |
+          mkdir -p allure-report
+          if [ -f gh-pages/history.jsonl ]; then
+            cp gh-pages/history.jsonl allure-report/history.jsonl
+          fi
+        continue-on-error: true
+
       - name: Generate Allure Report
-        uses: allure-framework/allure-action@v0
-        with:
-          allure_results: allure-results
-          allure_history: allure-history
+        run: allure generate allure-results --output allure-report
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure-report

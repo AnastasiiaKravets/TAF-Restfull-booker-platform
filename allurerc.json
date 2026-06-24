@@ -1,7 +1,7 @@
 {
   "name": "My Test Suite Report",
   "open": true,
-  "historyPath": "allure-history/history.jsonl",
+  "historyPath": "allure-report/history.jsonl",
   "appendHistory": true,
   "historyLimit": 5
 }
