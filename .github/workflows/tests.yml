@@ -45,7 +45,7 @@ jobs:
 #        run: npm install -g @allurereport/cli
 
       - name: Run API gate
-        run: pytest -m gate_api
+        run: pytest -m api
         continue-on-error: true
 
 #      - name: Checkout gh-pages for history
