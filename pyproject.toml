@@ -1,6 +1,7 @@
 [tool.pytest.ini_options]
 
-addopts = "--headed  --alluredir allure-results"
+addopts = "--alluredir allure-results"
+# --headed
 #generate_report_on_test = true
 
 #addopts = "--headed --tracing retain-on-failure -n 3"
