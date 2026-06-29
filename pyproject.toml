@@ -1,6 +1,8 @@
 [tool.pytest.ini_options]
 
-addopts = "--alluredir allure-results"
+addopts = "--alluredir allure-results --junit-xml=reports/pytest-report.xml"
+#junit_suite_name = "reports"
+
 # --headed
 #generate_report_on_test = true
 

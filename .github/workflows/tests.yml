@@ -57,6 +57,14 @@ jobs:
         run: pytest -m api
         continue-on-error: true
 
+      - name: Publish Pytest Report
+        uses: dorny/test-reporter@v3
+        if: always() # Runs even if your pytest suite has failing tests
+        with:
+          name: Pytest Results
+          path: reports/pytest-report.xml
+          reporter: java-junit
+
       - name: Get Allure history
         uses: actions/checkout@v4
         continue-on-error: true
