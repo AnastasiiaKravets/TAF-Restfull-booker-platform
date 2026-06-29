@@ -86,3 +86,8 @@ class TestAPI:
         assert result.status_code == 200
         for pet_item in result.json():
             assert pet_item["status"] == status, f"Pet id {pet_item['id']}"
+
+    @pytest.mark.api
+    def test_flaky(self):
+        value = random.choice([True, False])
+        assert value, "Random test error"
