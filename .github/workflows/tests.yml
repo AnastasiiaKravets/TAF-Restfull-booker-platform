@@ -71,6 +71,14 @@ jobs:
         with:
           name: pytest-html-report
           path: reports/report.html
+          retention-days: 30
+
+      - name: Purge Old Artifacts
+        uses: c-py/action-remove-artifacts@v3
+        if: always()
+        with:
+          artifact_name: 'pytest-html-report' # Matches the exact name from the step above
+          skip_recent: 10                     # Keeps the 10 most recent artifacts and deletes the rest
 
       - name: Get Allure history
         uses: actions/checkout@v4
