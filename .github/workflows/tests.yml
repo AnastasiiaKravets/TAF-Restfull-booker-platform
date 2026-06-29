@@ -7,6 +7,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
@@ -14,6 +18,7 @@ permissions:
 
 jobs:
   test:
+    name: Run Tests & Publish Reports
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: staging
@@ -38,40 +43,58 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-#      - name: Install Playwright browsers
-#        run: playwright install --with-deps chromium
+      - name: Create reports directory
+        run: mkdir -p reports
 
-      - name: Cache Allure CLI
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm-global
-          key: allure-cli-${{ runner.os }}
-
-      - name: Install Allure 3
-        run: |
-          npm config set prefix ~/.npm-global
-          npm install -g allure
-          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
-
-      - name: Run API gate
+      - name: Run API tests
         run: pytest -m api
         continue-on-error: true
 
+      - name: Test summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          python - <<'EOF' >> $GITHUB_STEP_SUMMARY
+          import xml.etree.ElementTree as ET
+          try:
+              tree = ET.parse("reports/pytest-report.xml")
+              ts = tree.getroot().find("testsuite") or tree.getroot()
+              attrs = ts.attrib
+              total  = attrs.get("tests", "?")
+              errors = attrs.get("errors", "0")
+              fails  = attrs.get("failures", "0")
+              skip   = attrs.get("skipped", "0")
+              passed = int(total or 0) - int(fails) - int(errors) - int(skip)
+              print(f"| Tests | Passed | Failed | Errors | Skipped |")
+              print(f"|-------|--------|--------|--------|---------|")
+              print(f"| {total} | {passed} | {fails} | {errors} | {skip} |")
+          except Exception as e:
+              print(f"Could not parse report: {e}")
+          EOF
+
       - name: Publish Pytest Report
         uses: dorny/test-reporter@v3
-        if: always() # Runs even if your pytest suite has failing tests
+        if: always()
         with:
           name: Pytest Results
           path: reports/pytest-report.xml
           reporter: java-junit
 
+      - name: Upload allure-results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results
+          path: allure-results/
+          retention-days: 3
+
       - name: Upload HTML Report Artifact
         uses: actions/upload-artifact@v4
-        if: always() # Ensures the HTML report is saved even if tests fail
+        if: always()
         with:
           name: pytest-html-report
           path: reports/report.html
-          retention-days: 30
+          retention-days: 14
 
       - name: Purge Old Artifacts
         uses: actions/github-script@v7
@@ -98,6 +121,32 @@ jobs:
               });
               console.log(`Deleted artifact: ${artifact.name} (id: ${artifact.id})`);
             }
+
+  publish-allure:
+    name: Publish Allure Report
+    runs-on: ubuntu-latest
+    needs: test
+    if: always() && needs.test.result != 'skipped'
+    timeout-minutes: 10
+
+    steps:
+      - name: Download allure-results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/
+
+      - name: Cache Allure CLI
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm-global
+          key: allure-cli-${{ runner.os }}
+
+      - name: Install Allure CLI
+        run: |
+          npm config set prefix ~/.npm-global
+          npm install -g allure
+          echo "$HOME/.npm-global/bin" >> $GITHUB_PATH
 
       - name: Get Allure history
         uses: actions/checkout@v4
