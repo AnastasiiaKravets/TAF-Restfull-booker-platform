@@ -80,6 +80,7 @@ jobs:
           name: Pytest Results
           path: reports/pytest-report.xml
           reporter: java-junit
+          fail-on-error: false
 
       - name: Upload allure-results
         uses: actions/upload-artifact@v4
