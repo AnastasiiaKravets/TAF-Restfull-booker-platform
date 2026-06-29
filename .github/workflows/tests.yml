@@ -74,11 +74,30 @@ jobs:
           retention-days: 30
 
       - name: Purge Old Artifacts
-        uses: c-py/action-remove-artifacts@v3
+        uses: actions/github-script@v7
         if: always()
         with:
-          artifact_name: 'pytest-html-report' # Matches the exact name from the step above
-          skip_recent: 10                     # Keeps the 10 most recent artifacts and deletes the rest
+          script: |
+            const artifactName = 'pytest-html-report';
+            const keepRecent = 5;
+            const artifacts = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: artifactName,
+              per_page: 100,
+            });
+            const sorted = artifacts.data.artifacts.sort(
+              (a, b) => new Date(b.created_at) - new Date(a.created_at)
+            );
+            const toDelete = sorted.slice(keepRecent);
+            for (const artifact of toDelete) {
+              await github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id,
+              });
+              console.log(`Deleted artifact: ${artifact.name} (id: ${artifact.id})`);
+            }
 
       - name: Get Allure history
         uses: actions/checkout@v4
