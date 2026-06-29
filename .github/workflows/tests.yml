@@ -156,8 +156,7 @@ jobs:
         with:
           ref: gh-pages
           path: gh-pages
-          sparse-checkout: history.jsonl
-          sparse-checkout-cone-mode: false
+          fetch-depth: 1
 
       - name: Restore history file
         run: |
