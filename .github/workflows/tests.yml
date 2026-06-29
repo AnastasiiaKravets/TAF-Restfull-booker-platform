@@ -161,8 +161,9 @@ jobs:
 
       - name: Restore history file
         run: |
+          mkdir -p allure-report
           if [ -f gh-pages/history.jsonl ]; then
-            cp gh-pages/history.jsonl allure-results/history.jsonl
+            cp gh-pages/history.jsonl allure-report/history.jsonl
           fi
         continue-on-error: true
 
