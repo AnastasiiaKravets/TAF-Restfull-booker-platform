@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     ENV: str
     BASE_API_URL: str = Field(alias="BASE_API_URL")
     AUTH_KEY: str
+    DEFAULT_API_TIMEOUT: int
+    TEST_API_USERNAME: str
+    TEST_API_PASSWORD: str
     BASE_UI_URL: str
     BROWSER: str
 
