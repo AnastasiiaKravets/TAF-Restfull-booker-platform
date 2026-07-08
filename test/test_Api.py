@@ -3,14 +3,8 @@ import random
 import pytest
 from faker import Faker
 
-from API.API_Client import API_Client
-from API.PetModels import PetCreateModelRequest, PetCreateModelResponse, PetStatus, PetErrorResponse
+from src.API.pet.PetModels import PetCreateModelRequest, PetCreateModelResponse, PetStatus, PetErrorResponse
 
-
-@pytest.fixture(scope="module")
-def api_client():
-    with API_Client() as client:
-        yield client
 
 @pytest.fixture(scope="function")
 def created_pet(api_client):
@@ -27,7 +21,7 @@ def created_pet(api_client):
 
 
 class TestAPI:
-    @pytest.mark.api
+    @pytest.mark.api_pet
     def test_create_pet(self, api_client):
         payload = PetCreateModelRequest(id=1, name="Doggie")
         print(payload.model_dump_json())
@@ -42,7 +36,7 @@ class TestAPI:
         assert not created_pet.photoUrls, "Photo urls should be empty"
         assert not created_pet.tags, "Tags should be empty"
 
-    @pytest.mark.api
+    @pytest.mark.api_pet
     def test_get_pet(self, created_pet: PetCreateModelRequest, api_client):
         result = api_client.get(f"pet/{created_pet.id}")
         assert result.status_code == 200
@@ -54,7 +48,7 @@ class TestAPI:
         assert pet.photoUrls == created_pet.photoUrls, "Photo urls should be empty"
         assert pet.tags == created_pet.tags, "Tags should be empty"
 
-    @pytest.mark.api
+    @pytest.mark.api_pet
     def test_update_pet(self, created_pet: PetCreateModelRequest, api_client):
         updated_pet = created_pet
         updated_pet.name = created_pet.name + "_Updated"
@@ -69,7 +63,7 @@ class TestAPI:
         assert pet.photoUrls == updated_pet.photoUrls, "Photo urls should be empty"
         assert pet.tags == updated_pet.tags, "Tags should be empty"
 
-    @pytest.mark.api
+    @pytest.mark.api_pet
     def test_delete_pet(self, created_pet: PetCreateModelRequest, api_client):
         result = api_client.delete(f"pet/{created_pet.id}")
         assert result.status_code == 200
@@ -79,7 +73,7 @@ class TestAPI:
         PetErrorResponse.model_validate(get_result.json())
 
 
-    @pytest.mark.api
+    @pytest.mark.api_pet
     @pytest.mark.parametrize("status", [pet_status.value for pet_status in PetStatus])
     def test_get_pet_by_status(self, api_client, status: PetStatus):
         result = api_client.get("/pet/findByStatus", params={"status": status})
@@ -87,7 +81,7 @@ class TestAPI:
         for pet_item in result.json():
             assert pet_item["status"] == status, f"Pet id {pet_item['id']}"
 
-    @pytest.mark.api
+    @pytest.mark.api_pet
     def test_flaky(self):
         value = random.choice([True, False])
         assert value, "Random test error"

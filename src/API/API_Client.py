@@ -5,20 +5,25 @@ from config import settings
 
 class API_Client():
 
-    def __init__(self, **kwargs):
-        # print(kwargs)
-        headers = {
+    def __init__(self, headers = None, timeout: int = None, **kwargs):
+        default_headers = {
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
-        self.client = httpx.Client(base_url=settings.BASE_API_URL, timeout=60, headers = headers, **kwargs)
+        if headers:
+            default_headers.update(headers)
+        default_timeout = timeout if timeout else settings.DEFAULT_API_TIMEOUT
+
+        self.client = httpx.Client(base_url=settings.BASE_API_URL,
+                                   timeout=default_timeout,
+                                   headers = default_headers,
+                                   **kwargs)
 
     def __enter__(self) -> API_Client:
         return self
 
     def __exit__(self, *_: object):
         self.client.close()
-        print("client closed")
 
     def get(self, path: str, **kwargs):
         return self.client.get(path, **kwargs)

@@ -2,6 +2,7 @@ pytest-playwright
 playwright
 pytest-xdist
 pydantic-settings
+pydantic[email]
 httpx
 faker
 pytest-html
