@@ -1,4 +1,4 @@
-from pydantic import Field, EmailStr, PositiveInt, HttpUrl, BaseModel
+from pydantic import EmailStr, PositiveInt, HttpUrl
 
 from src.API.models.common_models import StrictModel
 
@@ -19,5 +19,3 @@ class AuthResponse(StrictModel):
     gender: str
     image: HttpUrl
 
-class AuthErrorResponse(StrictModel):
-    message: str

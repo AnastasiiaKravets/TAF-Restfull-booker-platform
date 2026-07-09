@@ -16,3 +16,4 @@ config/.env
 /reports/
 /trace.zip
 /videos/
+/config/.env.local

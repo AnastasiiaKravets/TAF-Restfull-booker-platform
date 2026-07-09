@@ -1,6 +1,7 @@
 import pytest
 
-from src.API.models.auth_models import AuthRequest, AuthResponse, AuthErrorResponse
+from src.API.models.auth_models import AuthRequest, AuthResponse
+from src.API.models.common_models import BasicErrorResponse
 from src.API.models.user_models import UserResponseModel
 
 
@@ -25,7 +26,7 @@ def test_authorize_user_invalid(api_client, override, error_message):
 
     assert response.status_code == 400
 
-    auth_response = AuthErrorResponse.model_validate(response.json())
+    auth_response = BasicErrorResponse.model_validate(response.json())
     assert auth_response.message == error_message
 
 @pytest.mark.api
