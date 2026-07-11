@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List, Literal
-from pydantic import Field, EmailStr, PositiveInt, PositiveFloat
+from pydantic import Field, EmailStr, PositiveFloat
 
-from src.API.models.common_models import StrictModel
+from src.API.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
 
 
 class Dimensions(StrictModel):
@@ -51,12 +51,8 @@ class ProductResponse(StrictModel):
     images: List[str]
 
 
-class ProductListResponse(StrictModel):
+class ProductListResponse(PaginatedStrictModel):
     products: List[ProductResponse]
-    total: PositiveInt
-    skip: int
-    limit: PositiveInt
 
-class DeletedProductResponse(ProductResponse):
-    isDeleted: bool
-    deletedOn: datetime
+class DeletedProductResponse(ProductResponse, DeletedResponseModel):
+    pass

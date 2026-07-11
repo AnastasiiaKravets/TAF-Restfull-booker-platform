@@ -1,8 +1,8 @@
-from datetime import date
-from typing import Literal
+from datetime import date, datetime
+from typing import Literal, List, Optional
 from pydantic import Field, HttpUrl, EmailStr, IPvAnyAddress, PositiveInt, PositiveFloat
 
-from src.API.models.common_models import StrictModel
+from src.API.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
 
 
 class Hair(StrictModel):
@@ -46,11 +46,11 @@ class Crypto(StrictModel):
     network: str
 
 
-class UserResponseModel(StrictModel):
+class UserResponse(StrictModel):
     id: PositiveInt
     first_name: str = Field(..., alias="firstName", min_length=1)
     last_name: str = Field(..., alias="lastName", min_length=1)
-    maiden_name: str | None = Field(None, alias="maidenName")
+    maiden_name: Optional[str] = Field(None, alias="maidenName")
     age: int = Field(..., ge=0, le=120)
     gender: Literal["female", "male", "other"]
     email: EmailStr
@@ -74,4 +74,10 @@ class UserResponseModel(StrictModel):
     ssn: str
     user_agent: str = Field(..., alias="userAgent")
     crypto: Crypto
-    role: Literal["admin", "user", "manager"]
+    role: Literal["admin", "user", "moderator"]
+
+class UserListResponse(PaginatedStrictModel):
+    users: List[UserResponse]
+
+class DeletedUserResponse(UserResponse, DeletedResponseModel):
+    pass

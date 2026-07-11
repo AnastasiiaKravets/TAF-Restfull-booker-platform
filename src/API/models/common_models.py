@@ -1,4 +1,6 @@
-from pydantic import BaseModel, ConfigDict
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, PositiveInt, Field
 
 
 class StrictModel(BaseModel):
@@ -11,3 +13,12 @@ class StrictModel(BaseModel):
 
 class BasicErrorResponse(StrictModel):
     message: str
+
+class PaginatedStrictModel(StrictModel):
+    total: int = Field(ge=0)
+    skip: int = Field(ge=0)
+    limit: int = Field(ge=0)
+
+class DeletedResponseModel(StrictModel):
+    isDeleted: bool
+    deletedOn: datetime
