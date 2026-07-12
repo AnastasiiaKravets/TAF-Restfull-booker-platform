@@ -33,3 +33,14 @@ class CartResponse(StrictModel):
 
 class DeletedCartResponse(CartResponse, DeletedResponseModel):
     pass
+
+
+class CartUpdateRequest(StrictModel):
+    user_id: int | None = Field(None, alias="userId")
+    merge: bool | None = None
+    products: List[CartUpdateProduct]
+
+
+class CartUpdateProduct(StrictModel):
+    id: int
+    quantity: int

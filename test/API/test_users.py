@@ -10,22 +10,25 @@ from src.utils.API_utils import get_random_id
 @pytest.mark.api
 def test_get_all_users(api_client):
     response = api_client.get('users')
+
     assert response.status_code == 200
     user_response = UserListResponse.model_validate(response.json())
-
-    assert len(user_response.users) > 0
+    assert len(user_response.users) > 0, 'There should be at least one user'
     assert_pagination(user_response)
     assert_unique_field(user_response.users, 'id')
     assert_unique_field(user_response.users, 'email')
 
+
 @pytest.mark.api
 def test_get_user_by_id(api_client):
     user_id = get_random_id()
-    response = api_client.get(f'user/{user_id}')
-    assert response.status_code == 200
 
+    response = api_client.get(f'user/{user_id}')
+
+    assert response.status_code == 200
     user_response = UserResponse.model_validate(response.json())
     assert user_response.id == user_id
+
 
 @pytest.mark.api
 def test_update_user_data(api_client):
@@ -33,28 +36,33 @@ def test_update_user_data(api_client):
     user_id = get_random_id()
     new_name = Faker().name()
 
-    response = api_client.put(f'user/{user_id}', payload={'firstName': new_name})
+    response = api_client.put(f'user/{user_id}',
+                              payload={'firstName': new_name})
+
     assert response.status_code == 200
     user_response = UserResponse.model_validate(response.json())
     assert user_response.first_name == new_name
 
+
 @pytest.mark.api
 def test_delete_user(api_client):
     user_id = get_random_id()
-    response = api_client.delete(f'user/{user_id}')
-    assert response.status_code == 200
 
+    response = api_client.delete(f'user/{user_id}')
+
+    assert response.status_code == 200
     user_response = DeletedUserResponse.model_validate(response.json())
     assert user_response.isDeleted
+
 
 @pytest.mark.api
 def test_get_user_carts_by_user_id(api_client):
     user_id = get_random_id()
+
     response = api_client.get(f'user/{user_id}/carts')
+
     assert response.status_code == 200
-
     carts_response = CartListResponse.model_validate(response.json())
-
-    assert len(carts_response.carts) > 0
+    assert len(carts_response.carts) > 0, 'There should be at least one cart'
     assert_pagination(carts_response)
     assert_unique_field(carts_response.carts, 'id')

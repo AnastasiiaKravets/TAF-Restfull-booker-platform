@@ -18,20 +18,19 @@ def test_authorize_valid_user(api_client):
 
 
 @pytest.mark.api
-@pytest.mark.parametrize('override, error_message',
+@pytest.mark.parametrize('credentials_override, error_message',
                          [({'username': ''}, 'Username and password required'),
                           ({'password': ''}, 'Username and password required'),
                           ({'username': '78979'}, 'Invalid credentials'),
                           ({'password': '123'}, 'Invalid credentials')])
-def test_authorize_user_invalid(api_client, override, error_message):
-    user = get_valid_user(**override)
-    print(user)
+def test_authorize_user_with_invalid_credentials(api_client, credentials_override, error_message):
+    user = get_valid_user(**credentials_override)
 
     response = api_client.post('auth/login', payload=user)
 
     assert response.status_code == 400
-    auth_response = BasicErrorResponse.model_validate(response.json())
-    assert auth_response.message == error_message
+    error_response = BasicErrorResponse.model_validate(response.json())
+    assert error_response.message == error_message
 
 
 @pytest.mark.api

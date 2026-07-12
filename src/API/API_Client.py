@@ -40,5 +40,5 @@ class API_Client():
 
     def _serialize_payload(self, payload: BaseModel | dict[str, Any]):
         if isinstance(payload, BaseModel):
-            return payload.model_dump(exclude_unset=True)
+            return payload.model_dump(exclude_unset=True, by_alias=True)
         return payload

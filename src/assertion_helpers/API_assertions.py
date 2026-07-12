@@ -1,6 +1,8 @@
 from collections.abc import Iterable
 from typing import Any
 
+from pydantic import BaseModel
+
 from src.API.models.common_models import PaginatedStrictModel
 
 
@@ -14,7 +16,7 @@ def assert_pagination(model: PaginatedStrictModel, requested_limit=30, requested
         assert model.total == expected_total, (f'Expected total count of items are different from actual, '
                                                f'exected {expected_total}, actual {model.total}')
     else:
-        assert model.total > 0
+        assert model.total > 0, 'There should be at least one item'
 
 
 def assert_unique_field(items: Iterable[Any], field: str) -> None:
@@ -30,3 +32,17 @@ def assert_unique_field(items: Iterable[Any], field: str) -> None:
             seen.add(value)
 
     assert not duplicates, (f"Duplicate values found in '{field}': {duplicates}")
+
+
+def assert_products_in_cart(payload_products: BaseModel, response_products: BaseModel, exact_match=False):
+    expected = {(product.id, product.quantity) for product in payload_products.products}
+    actual = {(product.id, product.quantity) for product in response_products.products}
+
+    if exact_match:
+        assert expected == actual, (f'Different products id or quantity. \n'
+                                    f'Expected (id, quantity):{expected}, \n'
+                                    f'Actual (id, quantity):  {actual}')
+    else:
+        assert expected.issubset(actual), (f'Different products id or quantity. \n'
+                                           f'Expected (id, quantity):{expected}, \n'
+                                           f'Actual (id, quantity):  {actual}')
