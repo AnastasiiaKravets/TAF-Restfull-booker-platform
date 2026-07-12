@@ -1,3 +1,6 @@
+from collections.abc import Iterable
+from typing import Any
+
 from src.API.models.common_models import PaginatedStrictModel
 
 
@@ -12,3 +15,18 @@ def assert_pagination(model: PaginatedStrictModel, requested_limit=30, requested
                                                f'exected {expected_total}, actual {model.total}')
     else:
         assert model.total > 0
+
+
+def assert_unique_field(items: Iterable[Any], field: str) -> None:
+    seen = set()
+    duplicates = set()
+
+    for item in items:
+        value = getattr(item, field)
+
+        if value in seen:
+            duplicates.add(value)
+        else:
+            seen.add(value)
+
+    assert not duplicates, (f"Duplicate values found in '{field}': {duplicates}")

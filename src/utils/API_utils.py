@@ -1,5 +1,15 @@
 import random
 
+from config import settings
+from src.API.models.auth_models import AuthRequest
+
+
+def get_valid_user(expiresInMins=None, **kwargs):
+    user = {'username': settings.TEST_API_USERNAME, 'password': settings.TEST_API_PASSWORD}
+    user.update(kwargs)
+    if expiresInMins is not None:
+        user.update({'expiresInMins': expiresInMins})
+    return AuthRequest(**user)
 
 def get_random_id(start = 1, end = 100):
     return random.randint(start, end)

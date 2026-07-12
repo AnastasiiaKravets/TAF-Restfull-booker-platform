@@ -1,6 +1,7 @@
 import httpx
 
 from config import settings
+from src.API.models.common_models import BaseModel
 
 
 class API_Client():
@@ -28,12 +29,16 @@ class API_Client():
     def get(self, path: str, **kwargs):
         return self.client.get(path, **kwargs)
 
-    def post(self, path: str, **kwargs):
-        return self.client.post(path, **kwargs)
+    def post(self, path: str, payload: BaseModel | dict[str, Any], **kwargs):
+        return self.client.post(path, json=self._serialize_payload(payload), **kwargs)
 
-    def put(self, path: str, **kwargs):
-        return self.client.put(path, **kwargs)
+    def put(self, path: str, payload: BaseModel | dict[str, Any], **kwargs):
+        return self.client.put(path, json=self._serialize_payload(payload), **kwargs)
 
     def delete(self, path: str, **kwargs):
         return self.client.delete(path, **kwargs)
 
+    def _serialize_payload(self, payload: BaseModel | dict[str, Any]):
+        if isinstance(payload, BaseModel):
+            return payload.model_dump(exclude_unset=True)
+        return payload

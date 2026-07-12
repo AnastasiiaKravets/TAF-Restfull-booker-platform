@@ -1,4 +1,4 @@
-from pydantic import EmailStr, PositiveInt, HttpUrl
+from pydantic import EmailStr, PositiveInt, HttpUrl, Field
 
 from src.API.models.common_models import StrictModel
 
@@ -6,7 +6,7 @@ from src.API.models.common_models import StrictModel
 class AuthRequest(StrictModel):
     username: str
     password: str
-    expires_in: int | None = None
+    expires_in: int | None = Field(None, alias='expiresInMins')
 
 class AuthResponse(StrictModel):
     accessToken: str
