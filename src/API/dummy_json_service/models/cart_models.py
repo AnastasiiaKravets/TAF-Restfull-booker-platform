@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import HttpUrl, Field, PositiveFloat
 
-from src.API.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
+from src.API.dummy_json_service.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
 
 
 class CartListResponse(PaginatedStrictModel):

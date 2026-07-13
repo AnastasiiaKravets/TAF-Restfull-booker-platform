@@ -1,15 +1,15 @@
 import pytest
 from faker import Faker
 
-from src.API.models.cart_models import CartListResponse
-from src.API.models.user_models import UserResponse, UserListResponse, DeletedUserResponse
-from src.assertion_helpers.API_assertions import assert_pagination, assert_unique_field
-from src.utils.API_utils import get_random_id
+from src.API.dummy_json_service.helpers.API_assertions import assert_pagination, assert_unique_field
+from src.API.dummy_json_service.helpers.API_utils import get_random_id
+from src.API.dummy_json_service.models.cart_models import CartListResponse
+from src.API.dummy_json_service.models.user_models import UserResponse, UserListResponse, DeletedUserResponse
 
 
 @pytest.mark.api
-def test_get_all_users(api_client):
-    response = api_client.get('users')
+def test_get_all_users(dummy_api_client):
+    response = dummy_api_client.get('users')
 
     assert response.status_code == 200
     user_response = UserListResponse.model_validate(response.json())
@@ -20,10 +20,10 @@ def test_get_all_users(api_client):
 
 
 @pytest.mark.api
-def test_get_user_by_id(api_client):
+def test_get_user_by_id(dummy_api_client):
     user_id = get_random_id()
 
-    response = api_client.get(f'user/{user_id}')
+    response = dummy_api_client.get(f'user/{user_id}')
 
     assert response.status_code == 200
     user_response = UserResponse.model_validate(response.json())
@@ -31,13 +31,13 @@ def test_get_user_by_id(api_client):
 
 
 @pytest.mark.api
-def test_update_user_data(api_client):
+def test_update_user_data(dummy_api_client):
     # Not interesting as there is no field validation logic at the endpoint
     user_id = get_random_id()
     new_name = Faker().name()
 
-    response = api_client.put(f'user/{user_id}',
-                              payload={'firstName': new_name})
+    response = dummy_api_client.put(f'user/{user_id}',
+                                    payload={'firstName': new_name})
 
     assert response.status_code == 200
     user_response = UserResponse.model_validate(response.json())
@@ -45,10 +45,10 @@ def test_update_user_data(api_client):
 
 
 @pytest.mark.api
-def test_delete_user(api_client):
+def test_delete_user(dummy_api_client):
     user_id = get_random_id()
 
-    response = api_client.delete(f'user/{user_id}')
+    response = dummy_api_client.delete(f'user/{user_id}')
 
     assert response.status_code == 200
     user_response = DeletedUserResponse.model_validate(response.json())
@@ -56,10 +56,10 @@ def test_delete_user(api_client):
 
 
 @pytest.mark.api
-def test_get_user_carts_by_user_id(api_client):
+def test_get_user_carts_by_user_id(dummy_api_client):
     user_id = get_random_id()
 
-    response = api_client.get(f'user/{user_id}/carts')
+    response = dummy_api_client.get(f'user/{user_id}/carts')
 
     assert response.status_code == 200
     carts_response = CartListResponse.model_validate(response.json())

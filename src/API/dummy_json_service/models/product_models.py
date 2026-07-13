@@ -1,8 +1,9 @@
 from datetime import datetime
 from typing import List, Literal
+
 from pydantic import Field, EmailStr, PositiveFloat
 
-from src.API.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
+from src.API.dummy_json_service.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
 
 
 class Dimensions(StrictModel):

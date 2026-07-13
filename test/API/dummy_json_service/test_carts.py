@@ -1,14 +1,15 @@
 import pytest
 
-from src.API.models.cart_models import CartListResponse, CartResponse, DeletedCartResponse
-from src.API.models.common_models import BasicErrorResponse
-from src.assertion_helpers.API_assertions import assert_pagination, assert_unique_field, assert_products_in_cart
-from src.utils.API_utils import get_random_id, get_cart_payload
+from src.API.dummy_json_service.helpers.API_assertions import assert_pagination, assert_unique_field, \
+    assert_products_in_cart
+from src.API.dummy_json_service.helpers.API_utils import get_random_id, get_cart_payload
+from src.API.dummy_json_service.models.cart_models import CartListResponse, CartResponse, DeletedCartResponse
+from src.API.dummy_json_service.models.common_models import BasicErrorResponse
 
 
 @pytest.mark.api
-def test_get_all_carts(api_client):
-    response = api_client.get('carts')
+def test_get_all_carts(dummy_api_client):
+    response = dummy_api_client.get('carts')
     assert response.status_code == 200
 
     carts_response = CartListResponse.model_validate(response.json())
@@ -19,10 +20,10 @@ def test_get_all_carts(api_client):
 
 
 @pytest.mark.api
-def test_get_cart_by_id(api_client):
+def test_get_cart_by_id(dummy_api_client):
     cart_id = get_random_id()
 
-    response = api_client.get(f'carts/{cart_id}')
+    response = dummy_api_client.get(f'carts/{cart_id}')
 
     assert response.status_code == 200
     carts_response = CartResponse.model_validate(response.json())
@@ -30,10 +31,10 @@ def test_get_cart_by_id(api_client):
 
 
 @pytest.mark.api
-def test_get_cart_by_invalid_id(api_client):
+def test_get_cart_by_invalid_id(dummy_api_client):
     cart_id = get_random_id(start=100000, end=200000)
 
-    response = api_client.get(f'carts/{cart_id}')
+    response = dummy_api_client.get(f'carts/{cart_id}')
 
     assert response.status_code == 404
     error_response = BasicErrorResponse.model_validate(response.json())
@@ -41,10 +42,10 @@ def test_get_cart_by_invalid_id(api_client):
 
 
 @pytest.mark.api
-def test_get_carts_by_user_id(api_client):
+def test_get_carts_by_user_id(dummy_api_client):
     user_id = get_random_id()
 
-    response = api_client.get(f'carts/user/{user_id}')
+    response = dummy_api_client.get(f'carts/user/{user_id}')
 
     assert response.status_code == 200
     carts_response = CartListResponse.model_validate(response.json())
@@ -54,10 +55,10 @@ def test_get_carts_by_user_id(api_client):
 
 
 @pytest.mark.api
-def test_create_cart(api_client):
+def test_create_cart(dummy_api_client):
     cart_payload = get_cart_payload(user_id = get_random_id(), number_of_products=3)
 
-    response = api_client.post(f'carts/add', payload=cart_payload)
+    response = dummy_api_client.post(f'carts/add', payload=cart_payload)
 
     assert response.status_code == 201
     cart_response = CartResponse.model_validate(response.json())
@@ -66,21 +67,21 @@ def test_create_cart(api_client):
 
 
 @pytest.mark.api
-def test_update_cart(api_client):
+def test_update_cart(dummy_api_client):
     cart_id = get_random_id()
     cart_payload = get_cart_payload(merge=True, number_of_products=2)
 
-    response = api_client.put(f'carts/{cart_id}', payload=cart_payload)
+    response = dummy_api_client.put(f'carts/{cart_id}', payload=cart_payload)
     assert response.status_code == 200
     cart_response = CartResponse.model_validate(response.json())
     assert_products_in_cart(cart_payload, cart_response)
 
 
 @pytest.mark.api
-def test_delete_cart(api_client):
+def test_delete_cart(dummy_api_client):
     cart_id = get_random_id()
 
-    response = api_client.delete(f'carts/{cart_id}')
+    response = dummy_api_client.delete(f'carts/{cart_id}')
 
     assert response.status_code == 200
     cart_response = DeletedCartResponse.model_validate(response.json())

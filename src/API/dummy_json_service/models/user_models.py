@@ -1,8 +1,8 @@
-from datetime import date, datetime
 from typing import Literal, List, Optional
+
 from pydantic import Field, HttpUrl, EmailStr, IPvAnyAddress, PositiveInt, PositiveFloat
 
-from src.API.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
+from src.API.dummy_json_service.models.common_models import StrictModel, PaginatedStrictModel, DeletedResponseModel
 
 
 class Hair(StrictModel):

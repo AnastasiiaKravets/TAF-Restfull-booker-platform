@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-from pydantic import Field
 from pydantic_settings import SettingsConfigDict, BaseSettings
 
 _ENV = os.getenv("ENV", "local")
@@ -11,11 +10,13 @@ _ENV_FILE = Path(__file__).parent / "config" / f".env.{_ENV}"
 
 class Settings(BaseSettings):
     ENV: str
-    BASE_API_URL: str = Field(alias="BASE_API_URL")
     AUTH_KEY: str
     DEFAULT_API_TIMEOUT: int
-    TEST_API_USERNAME: str
-    TEST_API_PASSWORD: str
+
+    DUMMY_BASE_API_URL: str
+    DUMMY_TEST_API_USERNAME: str
+    DUMMY_TEST_API_PASSWORD: str
+
     BASE_UI_URL: str
     BROWSER: str
 

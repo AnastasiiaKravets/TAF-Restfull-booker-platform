@@ -1,12 +1,12 @@
 import random
 
 from config import settings
-from src.API.models.auth_models import AuthRequest
-from src.API.models.cart_models import CartUpdateProduct, CartUpdateRequest
+from src.API.dummy_json_service.models.auth_models import AuthRequest
+from src.API.dummy_json_service.models.cart_models import CartUpdateProduct, CartUpdateRequest
 
 
 def get_valid_user(expiresInMins=None, **kwargs):
-    user = {'username': settings.TEST_API_USERNAME, 'password': settings.TEST_API_PASSWORD}
+    user = {'username': settings.DUMMY_TEST_API_USERNAME, 'password': settings.DUMMY_TEST_API_PASSWORD}
     user.update(kwargs)
     if expiresInMins is not None:
         user.update({'expiresInMins': expiresInMins})

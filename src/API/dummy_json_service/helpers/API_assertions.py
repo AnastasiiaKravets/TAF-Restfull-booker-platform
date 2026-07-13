@@ -3,7 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from src.API.models.common_models import PaginatedStrictModel
+from src.API.dummy_json_service.models.common_models import PaginatedStrictModel
 
 
 def assert_pagination(model: PaginatedStrictModel, requested_limit=30, requested_skip=0, expected_total = None):

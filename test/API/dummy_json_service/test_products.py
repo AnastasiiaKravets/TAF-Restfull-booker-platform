@@ -3,15 +3,16 @@ import random
 import pytest
 from faker import Faker
 
-from src.API.models.common_models import BasicErrorResponse
-from src.API.models.product_models import ProductResponse, ProductListResponse, DeletedProductResponse
-from src.assertion_helpers.API_assertions import assert_pagination, assert_unique_field
-from src.utils.API_utils import get_random_id
+from src.API.dummy_json_service.helpers.API_assertions import assert_pagination, assert_unique_field
+from src.API.dummy_json_service.helpers.API_utils import get_random_id
+from src.API.dummy_json_service.models.common_models import BasicErrorResponse
+from src.API.dummy_json_service.models.product_models import ProductResponse, ProductListResponse, \
+    DeletedProductResponse
 
 
 @pytest.mark.api
-def test_get_all_products(api_client):
-    response = api_client.get('products')
+def test_get_all_products(dummy_api_client):
+    response = dummy_api_client.get('products')
 
     assert response.status_code == 200
     products_response = ProductListResponse.model_validate(response.json())
@@ -21,11 +22,11 @@ def test_get_all_products(api_client):
 
 
 @pytest.mark.api
-def test_products_paginating(api_client):
+def test_products_paginating(dummy_api_client):
     limit = 10
 
     #First 10 products
-    response = api_client.get('products', params={'limit': limit, 'skip': 0})
+    response = dummy_api_client.get('products', params={'limit': limit, 'skip': 0})
 
     assert response.status_code == 200
     products_response = ProductListResponse.model_validate(response.json())
@@ -36,7 +37,7 @@ def test_products_paginating(api_client):
     total_products_number = products_response.total
 
     #Second 10 products
-    response = api_client.get('products', params={'limit': limit, 'skip': limit})
+    response = dummy_api_client.get('products', params={'limit': limit, 'skip': limit})
 
     assert response.status_code == 200
     products_response = ProductListResponse.model_validate(response.json())
@@ -48,7 +49,7 @@ def test_products_paginating(api_client):
     #Last 10 products
     skip = total_products_number - limit
 
-    response = api_client.get('products', params={'limit': limit, 'skip': skip})
+    response = dummy_api_client.get('products', params={'limit': limit, 'skip': skip})
 
     assert response.status_code == 200
     products_response = ProductListResponse.model_validate(response.json())
@@ -60,10 +61,10 @@ def test_products_paginating(api_client):
 
 
 @pytest.mark.api
-def test_get_product_by_id(api_client):
+def test_get_product_by_id(dummy_api_client):
     product_id = get_random_id()
 
-    response = api_client.get(f'products/{product_id}')
+    response = dummy_api_client.get(f'products/{product_id}')
 
     assert response.status_code == 200
     products_response = ProductResponse.model_validate(response.json())
@@ -71,10 +72,10 @@ def test_get_product_by_id(api_client):
 
 
 @pytest.mark.api
-def test_get_product_by_invalid_id(api_client):
+def test_get_product_by_invalid_id(dummy_api_client):
     product_id = get_random_id(start=100000, end=200000)
 
-    response = api_client.get(f'products/{product_id}')
+    response = dummy_api_client.get(f'products/{product_id}')
 
     assert response.status_code == 404
     error_response = BasicErrorResponse.model_validate(response.json())
@@ -83,8 +84,8 @@ def test_get_product_by_invalid_id(api_client):
 
 @pytest.mark.api
 @pytest.mark.parametrize('search_word', ['phone', 'laptop', 'milk'])
-def test_search_products(api_client, search_word):
-    response = api_client.get('products/search', params={'q': search_word})
+def test_search_products(dummy_api_client, search_word):
+    response = dummy_api_client.get('products/search', params={'q': search_word})
 
     assert response.status_code == 200
     products_response = ProductListResponse.model_validate(response.json())
@@ -96,10 +97,10 @@ def test_search_products(api_client, search_word):
 
 
 @pytest.mark.api
-def test_search_products_invalid_query(api_client):
+def test_search_products_invalid_query(dummy_api_client):
     search_word = 'eqwdadasdas'
 
-    response = api_client.get('products/search', params={'q': search_word})
+    response = dummy_api_client.get('products/search', params={'q': search_word})
 
     assert response.status_code == 200
     products_response = ProductListResponse.model_validate(response.json())
@@ -108,8 +109,8 @@ def test_search_products_invalid_query(api_client):
 
 
 @pytest.mark.api
-def test_get_products_by_category_with_limit(api_client):
-    response = api_client.get('products/category-list')
+def test_get_products_by_category_with_limit(dummy_api_client):
+    response = dummy_api_client.get('products/category-list')
 
     assert response.status_code == 200
     category_response = response.json()
@@ -118,7 +119,7 @@ def test_get_products_by_category_with_limit(api_client):
     categories = random.sample(category_response, 3)
     for category in categories:
         limit = 5
-        response = api_client.get(f'products/category/{category}', params={'limit': limit})
+        response = dummy_api_client.get(f'products/category/{category}', params={'limit': limit})
 
         assert response.status_code == 200
         products_response = ProductListResponse.model_validate(response.json())
@@ -131,11 +132,11 @@ def test_get_products_by_category_with_limit(api_client):
 
 @pytest.mark.api
 @pytest.mark.xfail(reason="DummyJSON returns mocked partial response")
-def test_update_product_title(api_client):
+def test_update_product_title(dummy_api_client):
     product_id = get_random_id()
     new_title = Faker().word()
 
-    response = api_client.put(f'products/{product_id}', payload={'title': new_title})
+    response = dummy_api_client.put(f'products/{product_id}', payload={'title': new_title})
 
     assert response.status_code == 200
     product_response = ProductResponse.model_validate(response.json())
@@ -143,10 +144,10 @@ def test_update_product_title(api_client):
 
 
 @pytest.mark.api
-def test_delete_product(api_client):
+def test_delete_product(dummy_api_client):
     product_id = get_random_id()
 
-    response = api_client.delete(f'products/{product_id}')
+    response = dummy_api_client.delete(f'products/{product_id}')
 
     assert response.status_code == 200
     product_response = DeletedProductResponse.model_validate(response.json())

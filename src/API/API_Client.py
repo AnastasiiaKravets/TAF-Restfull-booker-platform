@@ -1,12 +1,12 @@
 import httpx
 
 from config import settings
-from src.API.models.common_models import BaseModel
+from src.API.dummy_json_service.models.common_models import BaseModel
 
 
 class API_Client():
 
-    def __init__(self, headers = None, timeout: int = None, **kwargs):
+    def __init__(self, base_url: str, headers=None, timeout: int = None, **kwargs):
         default_headers = {
             "Content-Type": "application/json",
             "Accept": "application/json"
@@ -15,7 +15,7 @@ class API_Client():
             default_headers.update(headers)
         default_timeout = timeout if timeout else settings.DEFAULT_API_TIMEOUT
 
-        self.client = httpx.Client(base_url=settings.BASE_API_URL,
+        self.client = httpx.Client(base_url=base_url,
                                    timeout=default_timeout,
                                    headers = default_headers,
                                    **kwargs)

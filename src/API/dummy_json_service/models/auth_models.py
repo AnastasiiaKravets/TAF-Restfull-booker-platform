@@ -1,6 +1,6 @@
 from pydantic import EmailStr, PositiveInt, HttpUrl, Field
 
-from src.API.models.common_models import StrictModel
+from src.API.dummy_json_service.models.common_models import StrictModel
 
 
 class AuthRequest(StrictModel):

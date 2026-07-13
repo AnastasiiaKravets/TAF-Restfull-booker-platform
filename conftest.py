@@ -1,19 +1,21 @@
 import pytest
 
+from config import settings
 from src.API.API_Client import API_Client
-from src.API.models.auth_models import AuthResponse
-from src.utils.API_utils import get_valid_user
+from src.API.dummy_json_service.helpers.API_utils import get_valid_user
+from src.API.dummy_json_service.models.auth_models import AuthResponse
 
 
-@pytest.fixture(scope="module")
-def api_client():
-    with API_Client() as client:
+@pytest.fixture(scope="package")
+def dummy_api_client():
+    with API_Client(base_url=settings.DUMMY_BASE_API_URL) as client:
         yield client
 
-@pytest.fixture(scope="module")
-def authorized_api_client(api_client):
-    response = api_client.post('auth/login', payload=get_valid_user())
+
+@pytest.fixture(scope="function")
+def dummy_authorized_api_client(dummy_api_client):
+    response = dummy_api_client.post('auth/login', payload=get_valid_user())
     auth_response = AuthResponse.model_validate(response.json())
     headers = {'Authorization': f'Bearer {auth_response.accessToken}'}
-    with API_Client(headers=headers) as auth_client:
+    with API_Client(base_url=settings.DUMMY_BASE_API_URL, headers=headers) as auth_client:
         yield auth_client
