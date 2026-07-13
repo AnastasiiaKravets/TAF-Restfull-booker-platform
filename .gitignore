@@ -13,9 +13,7 @@
 config/.env
 /allure-report/
 /allure-results/
-/tries/
-/report.html
-/task.md
+/reports/
 /trace.zip
 /videos/
-/history.jsonl
+/config/.env.local
