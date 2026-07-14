@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 from pathlib import Path
 
 from pydantic_settings import SettingsConfigDict, BaseSettings
@@ -17,8 +18,13 @@ class Settings(BaseSettings):
     DUMMY_TEST_API_USERNAME: str
     DUMMY_TEST_API_PASSWORD: str
 
+    RESTFULL_BASE_API_URL: str
+
     BASE_UI_URL: str
-    BROWSER: str
+    BROWSER: BrowserType
+    DEVICE: str | None = None  # none for desktop, value for mobile device, ex. 'Galaxy Tab S4'
+    HEADLESS: bool
+    SLOW_MO: int = 0
 
     model_config = SettingsConfigDict(
         env_file=str(_ENV_FILE),
@@ -27,6 +33,13 @@ class Settings(BaseSettings):
         # cli_parse_args=True,
         extra="ignore"
     )
+
+
+class BrowserType(str, Enum):
+    CHROME = 'chromium'
+    FIREFOX = 'firefox'
+    WEBKIT = 'webkit'
+
 
 settings = Settings()
 
