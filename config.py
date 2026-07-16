@@ -20,6 +20,9 @@ class Settings(BaseSettings):
 
     RESTFULL_BASE_API_URL: str
 
+    RESTFULL_USER: str
+    RESTFULL_PASSWORD: str
+
     BASE_UI_URL: str
     BROWSER: BrowserType
     DEVICE: str | None = None  # none for desktop, value for mobile device, ex. 'Galaxy Tab S4'

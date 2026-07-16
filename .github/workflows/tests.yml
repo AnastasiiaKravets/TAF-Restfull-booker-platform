@@ -26,8 +26,9 @@ jobs:
 
     env:
       ENV: staging
-      BROWSER: chromium
       AUTH_KEY: ${{ secrets.AUTH_KEY }}
+      RESTFULL_USER: ${{ secrets.RESTFULL_USER }}
+      RESTFULL_PASSWORD: ${{ secrets.RESTFULL_PASSWORD }}
 
     steps:
       - name: Checkout
