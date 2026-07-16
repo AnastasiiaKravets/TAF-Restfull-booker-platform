@@ -12,11 +12,6 @@ class StrictModel(BaseModel):
 class BasicErrorResponse(StrictModel):
     error: str
 
-# class PaginatedStrictModel(StrictModel):
-#     total: int = Field(ge=0)
-#     skip: int = Field(ge=0)
-#     limit: int = Field(ge=0)
-#
-# class DeletedResponseModel(StrictModel):
-#     isDeleted: bool
-#     deletedOn: datetime
+class BasicWarningResponse(StrictModel):
+    message: str
+
