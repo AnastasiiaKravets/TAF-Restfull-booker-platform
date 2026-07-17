@@ -39,14 +39,3 @@ class PlaywrightManager:
             options.update({**device})
 
         return options
-
-# context = browser.new_context()
-# # context = browser.new_context(
-# #     record_video_dir="videos/",
-# #     record_video_size={"width": 640, "height": 480}
-# # )
-#
-# # context.tracingg.start(screenshots=True, snapshots=True, sources=True)
-#
-# yield context
-# # context.tracing.stop(path="../trace.zip")
