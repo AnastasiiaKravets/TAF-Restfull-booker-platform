@@ -1,7 +1,7 @@
 import pytest
 
-from API.restfull_booker_service.models.auth_models import LogoutResponse
-from data.user_data import get_valid_user
+from src.API.restfull_booker_service.models.auth_models import LogoutResponse
+from src.data.user_data import get_valid_user
 from src.API.restfull_booker_service.models.auth_models import Token, ValidateResponse
 from src.API.restfull_booker_service.models.common_models import BasicErrorResponse, BasicWarningResponse
 

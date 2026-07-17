@@ -1,5 +1,5 @@
-from UI.admin_part.components.header import HeaderComponent
-from UI.common.base_page import BasePage
+from src.UI.admin_part.components.header import HeaderComponent
+from src.UI.common.base_page import BasePage
 
 
 class LoginPage(BasePage):

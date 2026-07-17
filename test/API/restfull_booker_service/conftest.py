@@ -1,7 +1,7 @@
 import pytest
 
 from config import settings
-from data.user_data import get_valid_user
+from src.data.user_data import get_valid_user
 from src.API.API_Client import API_Client
 from src.API.restfull_booker_service.models.auth_models import Token
 
