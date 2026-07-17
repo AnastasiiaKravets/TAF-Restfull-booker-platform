@@ -43,11 +43,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Install playwright
+        run: playwright install
+
       - name: Create reports directory
         run: mkdir -p reports
 
       - name: Run API tests
-        run: pytest -m api
+        run: pytest -m api -m ui
         continue-on-error: true
 
       - name: Test summary
