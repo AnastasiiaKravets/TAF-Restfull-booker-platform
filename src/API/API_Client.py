@@ -1,12 +1,14 @@
+from typing import Any
+
 import httpx
 
 from config import settings
 from src.API.dummy_json_service.models.common_models import BaseModel
 
 
-class API_Client():
+class API_Client:
 
-    def __init__(self, base_url: str, headers=None, timeout: int = None, **kwargs):
+    def __init__(self, base_url: str, headers=None, timeout: int=None, **kwargs):
         default_headers = {
             "Content-Type": "application/json",
             "Accept": "application/json"
@@ -38,7 +40,8 @@ class API_Client():
     def delete(self, path: str, **kwargs):
         return self.client.delete(path, **kwargs)
 
-    def _serialize_payload(self, payload: BaseModel | dict[str, Any]):
+    @staticmethod
+    def _serialize_payload(payload: BaseModel | dict[str, Any]):
         if isinstance(payload, BaseModel):
             return payload.model_dump(exclude_unset=True, by_alias=True)
         return payload

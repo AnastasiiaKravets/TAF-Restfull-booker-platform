@@ -72,3 +72,29 @@ def test_logout(authorized_api_client, token_payload, expected_status_code, erro
     assert response.status_code == expected_status_code
     error_response = BasicWarningResponse.model_validate(response.json())
     assert error_response.message, error_message
+
+
+@pytest.mark.api
+@pytest.mark.workflows
+def test_full_token_validation(api_client):
+    """
+    Login -> Validate token -> logout -> Validate token
+    """
+    response = api_client.post('auth/login', payload=get_valid_user())
+    assert response.status_code == 200
+    token = Token.model_validate(response.json())
+
+    response = api_client.post('auth/validate', payload=token)
+    assert response.status_code == 200
+    validate_response = ValidateResponse.model_validate(response.json())
+    assert validate_response.valid, 'Token should be valid'
+
+    response = api_client.post('auth/logout', payload=token)
+    assert response.status_code == 200
+    logout_response = LogoutResponse.model_validate(response.json())
+    assert logout_response.success, 'Logout should be successful'
+
+    response = api_client.post('auth/validate', payload=token)
+    assert response.status_code == 200
+    validate_response = ValidateResponse.model_validate(response.json())
+    assert not validate_response.valid, 'Token should be invalid'
