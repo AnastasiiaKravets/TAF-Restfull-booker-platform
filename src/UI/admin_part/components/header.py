@@ -1,6 +1,9 @@
 from playwright.sync_api import Page
 
-class HeaderComponent:
+from src.UI.common.base_component import BaseComponent
+
+
+class HeaderComponent(BaseComponent):
 
     def __init__(self, page: Page):
         self.page = page.get_by_role("navigation")
