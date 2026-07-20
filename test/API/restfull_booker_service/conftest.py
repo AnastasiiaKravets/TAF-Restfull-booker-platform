@@ -1,15 +1,9 @@
 import pytest
 
 from config import settings
-from src.data.user_data import get_valid_user
 from src.API.API_Client import API_Client
 from src.API.restfull_booker_service.models.auth_models import Token
-
-
-@pytest.fixture(scope="package")
-def api_client():
-    with API_Client(base_url=settings.RESTFULL_BASE_API_URL) as client:
-        yield client
+from src.data.user_data import get_valid_user
 
 
 @pytest.fixture(scope="module")
