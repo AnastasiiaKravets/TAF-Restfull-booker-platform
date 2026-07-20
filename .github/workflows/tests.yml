@@ -26,8 +26,9 @@ jobs:
 
     env:
       ENV: staging
-      BROWSER: chromium
       AUTH_KEY: ${{ secrets.AUTH_KEY }}
+      RESTFULL_USER: ${{ secrets.RESTFULL_USER }}
+      RESTFULL_PASSWORD: ${{ secrets.RESTFULL_PASSWORD }}
 
     steps:
       - name: Checkout
@@ -42,11 +43,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Install playwright
+        run: playwright install
+
       - name: Create reports directory
         run: mkdir -p reports
 
       - name: Run API tests
-        run: pytest -m api
+        run: pytest -m "api or ui"
         continue-on-error: true
 
       - name: Test summary
