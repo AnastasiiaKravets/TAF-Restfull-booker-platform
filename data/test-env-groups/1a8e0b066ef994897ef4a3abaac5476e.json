@@ -1,0 +1,1 @@
+{"id":"1a8e0b066ef994897ef4a3abaac5476e","fullName":"test.API.restfull_booker_service.test_auth#test_validate_invalid_token","name":"test_validate_invalid_token[-401-No token provided]","status":"passed","testResultsByEnv":{"default":"465d6e8ea76a7b503c076021f7046b0d"}}
